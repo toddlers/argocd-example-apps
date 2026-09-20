@@ -1,0 +1,22 @@
+# sync-demo/hook-postsync-smoke.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: smoke-test
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: smoke
+          image: busybox:1.36
+          command:
+            [
+              "sh",
+              "-c",
+              "wget -q -O- http://web.sync-demo.svc.cluster.local && echo SMOKE OK",
+            ]

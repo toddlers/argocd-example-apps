@@ -6,6 +6,7 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
+  progressDeadlineSeconds: 60
   replicas: 2
   selector:
     matchLabels: { app: web }
@@ -15,7 +16,7 @@ spec:
     spec:
       containers:
         - name: nginx
-          image: nginx:1.27
+          image: nginx:this-tag-deont-exists
           ports: [{ containerPort: 80 }]
           env:
             - name: GREETING

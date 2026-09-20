@@ -18,5 +18,5 @@ spec:
             [
               "sh",
               "-c",
-              "wget -q -O- http://web.sync-demo.svc.cluster.local && echo SMOKE OK",
+              "wget -q -O- http://web.sync-demo.svc.cluster.local:9999 && echo SMOKE OK",
             ]

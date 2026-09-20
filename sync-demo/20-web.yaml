@@ -1,0 +1,33 @@
+# sync-demo/20-web.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app: web }
+  template:
+    metadata:
+      labels: { app: web }
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.27
+          ports: [{ containerPort: 80 }]
+          env:
+            - name: GREETING
+              valueFrom:
+                configMapKeyRef: { name: app-config, key: greeting }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  selector: { app: web }
+  ports: [{ port: 80, targetPort: 80 }]

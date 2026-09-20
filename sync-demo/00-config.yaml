@@ -5,4 +5,4 @@ metadata:
   annotations:
     argocd.argoproject.io/sync-wave: "-1"
 data:
-  greeeting: "Hello wfrom wave -1"
+  greeting: "Hello wfrom wave -1"

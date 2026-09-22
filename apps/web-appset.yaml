@@ -15,6 +15,7 @@ spec:
         revision: HEAD
         directories:
           - path: kustomize-web/overlays/*
+    - clusters: {}
   template:
     metadata:
       name: "web-{{.path.basename}}"

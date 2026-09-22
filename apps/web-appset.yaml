@@ -8,22 +8,23 @@ spec:
   goTemplate: true
   goTemplateOptions: ["missingkey=error"]
   generators:
-    - list:
-        elements:
-          - env: dev
-          - env: prod
+    - git:
+        repoURL: https://github.com/toddlers/argocd-example-apps.git
+        revision: HEAD
+        directories:
+          - path: kustomize-web/overlays/*
   template:
     metadata:
-      name: "web-{{.env}}"
+      name: "web-{{.path.basename}}"
     spec:
       project: default
       source:
         repoURL: https://github.com/toddlers/argocd-example-apps.git
         targetRevision: HEAD
-        path: "kustomize-web/overlays/{{.env}}"
+        path: "kustomize-web/overlays/{{.path.basename}}"
       destination:
         server: https://kubernetes.default.svc
-        namespace: "web-{{.env}}"
+        namespace: "web-{{.path.basename}}"
       syncPolicy:
         automated: { prune: true, selfHeal: true }
         syncOptions: [CreateNamespace=true]

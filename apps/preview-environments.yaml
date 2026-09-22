@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: preview-environments
+  namespace: argocd
+  finalizers:
+    - argocd.argoproj.io/finalizer
+spec:
+  generators:
+    - pullRequest:
+        github:
+          owner: toddlers # e.g., "johndoe"
+          repo: argocd-example-apps # e.g., "my-sample-app"
+          tokenRef:
+            secretName: github-token
+            key: token
+        requeueAfterSeconds: 30 # Reduced to 30s for quick testing
+  template:
+    metadata:
+      name: "preview-app-pr-{{number}}"
+      namespace: argocd
+      finalizers:
+        - argocd.argoproj.io/finalizer
+    spec:
+      project: default
+      source:
+        repoURL: "https://github.com/toddlers/argocd-example-apps.git"
+        targetRevision: "{{head_sha}}"
+        path: kustomize/overlays/dev # Ensure this folder exists in your repo
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "preview-pr-{{number}}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

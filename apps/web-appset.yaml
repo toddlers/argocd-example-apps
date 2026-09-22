@@ -18,16 +18,16 @@ spec:
     - clusters: {}
   template:
     metadata:
-      name: "web-{{.path.basename}}"
+      name: "web-{{.nameNormalized}}"
     spec:
       project: default
       source:
         repoURL: https://github.com/toddlers/argocd-example-apps.git
         targetRevision: HEAD
-        path: "kustomize-web/overlays/{{.path.basename}}"
+        path: "kustomize-web/overlays/{{.nameNormalized}}"
       destination:
         server: https://kubernetes.default.svc
-        namespace: "web-{{.path.basename}}"
+        namespace: "web-{{.nameNormalized}}"
       syncPolicy:
         automated: { prune: true, selfHeal: true }
         syncOptions: [CreateNamespace=true]

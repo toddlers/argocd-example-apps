@@ -1,0 +1,29 @@
+# apps/web-appset.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: web
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - list:
+        elements:
+          - env: dev
+          - env: prod
+  template:
+    metadata:
+      name: "web-{{.env}}"
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/toddlers/argocd-example-apps.git
+        targetRevision: HEAD
+        path: "kustomize-web/overlays/{{.env}}"
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "web-{{.env}}"
+      syncPolicy:
+        automated: { prune: true, selfHeal: true }
+        syncOptions: [CreateNamespace=true]

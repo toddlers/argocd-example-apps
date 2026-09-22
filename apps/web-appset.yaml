@@ -4,30 +4,30 @@ kind: ApplicationSet
 metadata:
   name: web
   namespace: argocd
-  finalizers:
-    - argocd.argoproj.io/finalizer
 spec:
   goTemplate: true
   goTemplateOptions: ["missingkey=error"]
   generators:
-    - git:
-        repoURL: https://github.com/toddlers/argocd-example-apps.git
-        revision: HEAD
-        directories:
-          - path: kustomize-web/overlays/*
-    - clusters: {}
+    - matrix:
+        generators:
+          - git:
+              repoURL: https://github.com/toddlers/argocd-example-apps.git
+              revision: HEAD
+              directories:
+                - path: kustomize-web/overlays/*
+          - clusters: {}
   template:
     metadata:
-      name: "web-{{.nameNormalized}}"
+      name: "web-{{.path.basename}}-{{.nameNormalized}}"
     spec:
       project: default
       source:
         repoURL: https://github.com/toddlers/argocd-example-apps.git
         targetRevision: HEAD
-        path: "kustomize-web/overlays/{{.nameNormalized}}"
+        path: "{{.path.path}}"
       destination:
-        server: https://kubernetes.default.svc
-        namespace: "web-{{.nameNormalized}}"
+        server: "{{.server}}"
+        namespace: "web-{{.path.basename}}"
       syncPolicy:
         automated: { prune: true, selfHeal: true }
         syncOptions: [CreateNamespace=true]

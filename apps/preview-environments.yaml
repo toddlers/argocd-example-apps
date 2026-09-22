@@ -26,7 +26,7 @@ spec:
       source:
         repoURL: "https://github.com/toddlers/argocd-example-apps.git"
         targetRevision: "{{head_sha}}"
-        path: kustomize/overlays/dev # Ensure this folder exists in your repo
+        path: kustomize-web/overlays/dev # Ensure this folder exists in your repo
       destination:
         server: https://kubernetes.default.svc
         namespace: "preview-pr-{{number}}"

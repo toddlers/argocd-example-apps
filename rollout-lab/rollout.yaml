@@ -18,7 +18,7 @@ spec:
           image: hashicorp/http-echo:1.0
           args:
             - -listen=:5678
-            - -text=v1            # <- the "version" we change in each scenario
+            - -text=v2 # <- the "version" we change in each scenario
           ports:
             - containerPort: 5678
           readinessProbe:
@@ -31,16 +31,16 @@ spec:
               memory: 16Mi
   strategy:
     canary:
-      canaryService: rollouts-demo-canary   # Rollouts pins this Service to canary pods
-      stableService: rollouts-demo-stable   # ...and this one to stable pods
+      canaryService: rollouts-demo-canary # Rollouts pins this Service to canary pods
+      stableService: rollouts-demo-stable # ...and this one to stable pods
       steps:
-        - setWeight: 20        # 1 of 5 pods runs the new version
-        - pause: {}            # wait for a human: Promote / Resume
-        - analysis:            # smoke test against canary pods only
+        - setWeight: 20 # 1 of 5 pods runs the new version
+        - pause: {} # wait for a human: Promote / Resume
+        - analysis: # smoke test against canary pods only
             templates:
               - templateName: canary-smoke-test
             args:
               - name: canary-service
                 value: rollouts-demo-canary
         - setWeight: 60
-        - pause: {duration: 20s}
+        - pause: { duration: 20s }

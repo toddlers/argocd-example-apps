@@ -1,0 +1,35 @@
+# Hits ALL pods (stable + canary) -> use it to watch the traffic split
+apiVersion: v1
+kind: Service
+metadata:
+  name: rollouts-demo
+spec:
+  selector:
+    app: rollouts-demo
+  ports:
+    - port: 80
+      targetPort: 5678
+---
+# Argo Rollouts adds rollouts-pod-template-hash=<stable hash> to this selector
+apiVersion: v1
+kind: Service
+metadata:
+  name: rollouts-demo-stable
+spec:
+  selector:
+    app: rollouts-demo
+  ports:
+    - port: 80
+      targetPort: 5678
+---
+# Argo Rollouts adds rollouts-pod-template-hash=<canary hash> to this selector
+apiVersion: v1
+kind: Service
+metadata:
+  name: rollouts-demo-canary
+spec:
+  selector:
+    app: rollouts-demo
+  ports:
+    - port: 80
+      targetPort: 5678

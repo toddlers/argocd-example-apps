@@ -1,0 +1,33 @@
+# A Job that curls the canary Service 10 times.
+# Job succeeds (all 200s) -> analysis passes. Job fails -> analysis fails -> Rollout aborts.
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: canary-smoke-test
+spec:
+  args:
+    - name: canary-service
+  metrics:
+    - name: smoke-test
+      provider:
+        job:
+          spec:
+            backoffLimit: 0
+            template:
+              spec:
+                restartPolicy: Never
+                containers:
+                  - name: curl
+                    image: curlimages/curl:8.10.1
+                    command: ["sh", "-c"]
+                    args:
+                      - |
+                        fails=0
+                        for i in $(seq 1 10); do
+                          code=$(curl -s -o /dev/null -w '%{http_code}' http://{{args.canary-service}}/)
+                          echo "request $i -> HTTP $code"
+                          [ "$code" = "200" ] || fails=$((fails+1))
+                          sleep 1
+                        done
+                        echo "failures: $fails"
+                        [ "$fails" -eq 0 ]

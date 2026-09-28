@@ -18,8 +18,7 @@ spec:
           image: hashicorp/http-echo:1.0
           args:
             - -listen=:5678
-            - -text=v3 # <- the "version" we change in each scenario
-            - -status-code=500
+            - -text=v2 # <- the "version" we change in each scenario
           ports:
             - containerPort: 5678
           readinessProbe:
